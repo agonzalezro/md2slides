@@ -4,7 +4,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/agonzalezro/md2slides/presentation"
@@ -19,8 +22,9 @@ var (
 	outputFile  = kingpin.Flag("output", "output file where to write the HTML.").Default("/dev/stdout").Short('o').OpenFile(os.O_CREATE|os.O_WRONLY, 0644)
 	startDaemon = kingpin.Flag("daemon", "start a simple HTTP serving your slides.").Short('d').Bool()
 	port        = kingpin.Flag("port", "port where to run the server.").Default("8080").Int()
+	config      = kingpin.Flag("theme-config", "configuration for the theme (JS file)").Short('c').File()
 
-	source = kingpin.Arg("source", "Markdown source file.").Required().ExistingFile()
+	source = kingpin.Arg("source", "Markdown source file.").Required().File()
 )
 
 func init() {
@@ -41,5 +45,17 @@ func main() {
 
 	p.Theme = *theme
 
-	ifErrFatal(p.Write(*outputFile))
+	if *startDaemon {
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			ifErrFatal(p.WriteWithConfig(w, *config))
+		})
+
+		port := ":" + strconv.Itoa(*port)
+		log.Println("Serving slides at", port)
+		log.Fatal(http.ListenAndServe(port, nil))
+		return
+	}
+
+	// Write it just if we don't serve it
+	ifErrFatal(p.WriteWithConfig(*outputFile, *config))
 }

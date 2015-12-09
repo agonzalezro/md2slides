@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -10,13 +11,14 @@ import (
 
 type Presentation struct {
 	Slides []string
+	Config string
 	Theme  string
 }
 
-func NewFromFile(sourcePath string) (*Presentation, error) {
+func NewFromFile(sourceFile *os.File) (*Presentation, error) {
 	p := Presentation{}
 
-	b, err := ioutil.ReadFile(sourcePath)
+	b, err := ioutil.ReadAll(sourceFile)
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +46,21 @@ func (p Presentation) template() (*template.Template, error) {
 	return t, nil
 }
 
-func (p Presentation) Write(file *os.File) error {
+func (p Presentation) WriteWithConfig(wr io.Writer, config *os.File) error {
+	if config != nil {
+		b, err := ioutil.ReadAll(config)
+		if err != nil {
+			return err
+		}
+		p.Config = string(b)
+	}
+
 	t, err := p.template()
 	if err != nil {
 		return err
 	}
 
-	if err = t.Execute(file, p); err != nil {
+	if err = t.Execute(wr, p); err != nil {
 		return err
 	}
 
