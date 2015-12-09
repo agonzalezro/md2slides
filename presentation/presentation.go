@@ -13,14 +13,22 @@ type Presentation struct {
 	Slides []string
 	Config string
 	Theme  string
+
+	sourceFile *os.File
 }
 
 func NewFromFile(sourceFile *os.File) (*Presentation, error) {
-	p := Presentation{}
-
-	b, err := ioutil.ReadAll(sourceFile)
-	if err != nil {
+	p := Presentation{sourceFile: sourceFile}
+	if err := p.Load(); err != nil {
 		return nil, err
+	}
+	return &p, nil
+}
+
+func (p *Presentation) Load() error {
+	b, err := ioutil.ReadAll(p.sourceFile)
+	if err != nil {
+		return err
 	}
 	slides := regexp.MustCompile("\n---\n").Split(string(b), -1)
 
@@ -28,7 +36,15 @@ func NewFromFile(sourceFile *os.File) (*Presentation, error) {
 		p.Slides = append(p.Slides, markdown(slide))
 	}
 
-	return &p, nil
+	return nil
+}
+
+func (p *Presentation) Reload() error {
+	if _, err := p.sourceFile.Seek(0, 0); err != nil {
+		return err
+	}
+	p.Slides = []string{}
+	return p.Load()
 }
 
 func (p Presentation) template() (*template.Template, error) {

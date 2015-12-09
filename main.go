@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/agonzalezro/md2slides/presentation"
+	"github.com/gorilla/mux"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -46,13 +47,17 @@ func main() {
 	p.Theme = *theme
 
 	if *startDaemon {
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		r := mux.NewRouter()
+
+		r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			p.Reload()
 			ifErrFatal(p.WriteWithConfig(w, *config))
 		})
 
 		port := ":" + strconv.Itoa(*port)
 		log.Println("Serving slides at", port)
-		log.Fatal(http.ListenAndServe(port, nil))
+		log.Fatal(http.ListenAndServe(port, r))
+
 		return
 	}
 
