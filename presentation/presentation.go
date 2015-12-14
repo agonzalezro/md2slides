@@ -14,11 +14,12 @@ type Presentation struct {
 	Config string
 	Theme  string
 
-	sourceFile *os.File
+	sourceFile   *os.File
+	sourceConfig *os.File
 }
 
-func NewFromFile(sourceFile *os.File) (*Presentation, error) {
-	p := Presentation{sourceFile: sourceFile}
+func NewFromFileWithConfig(sourceFile *os.File, sourceConfig *os.File) (*Presentation, error) {
+	p := Presentation{sourceFile: sourceFile, sourceConfig: sourceConfig}
 	if err := p.Load(); err != nil {
 		return nil, err
 	}
@@ -44,6 +45,10 @@ func (p *Presentation) Reload() error {
 		return err
 	}
 	p.Slides = []string{}
+	if _, err := p.sourceConfig.Seek(0, 0); err != nil {
+		return err
+	}
+	p.Config = ""
 	return p.Load()
 }
 
@@ -62,9 +67,9 @@ func (p Presentation) template() (*template.Template, error) {
 	return t, nil
 }
 
-func (p Presentation) WriteWithConfig(wr io.Writer, config *os.File) error {
-	if config != nil {
-		b, err := ioutil.ReadAll(config)
+func (p Presentation) Write(wr io.Writer) error {
+	if p.sourceConfig != nil {
+		b, err := ioutil.ReadAll(p.sourceConfig)
 		if err != nil {
 			return err
 		}

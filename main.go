@@ -41,7 +41,7 @@ func main() {
 		kingpin.Fatalf("theme: %s not found", *theme)
 	}
 
-	p, err := presentation.NewFromFile(*source)
+	p, err := presentation.NewFromFileWithConfig(*source, *config)
 	ifErrFatal(err)
 
 	p.Theme = *theme
@@ -51,7 +51,7 @@ func main() {
 
 		r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			p.Reload()
-			ifErrFatal(p.WriteWithConfig(w, *config))
+			ifErrFatal(p.Write(w))
 		})
 
 		r.PathPrefix("/").Handler(http.FileServer(http.Dir(".")))
@@ -64,5 +64,5 @@ func main() {
 	}
 
 	// Write it just if we don't serve it
-	ifErrFatal(p.WriteWithConfig(*outputFile, *config))
+	ifErrFatal(p.Write(*outputFile))
 }
