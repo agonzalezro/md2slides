@@ -54,6 +54,8 @@ func main() {
 			ifErrFatal(p.WriteWithConfig(w, *config))
 		})
 
+		r.PathPrefix("/").Handler(http.FileServer(http.Dir(".")))
+
 		port := ":" + strconv.Itoa(*port)
 		log.Println("Serving slides at", port)
 		log.Fatal(http.ListenAndServe(port, r))
