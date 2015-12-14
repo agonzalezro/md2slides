@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	availableThemes = []string{"reveal"}
+	availableThemes = []string{"reveal", "shower"}
 	theme           *string
 
 	outputFile  = kingpin.Flag("output", "output file where to write the HTML.").Default("/dev/stdout").Short('o').OpenFile(os.O_CREATE|os.O_WRONLY, 0644)

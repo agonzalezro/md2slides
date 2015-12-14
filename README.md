@@ -62,3 +62,9 @@ There are some templates that should be added to the binary file, for doing that
 After that you are ready to build:
 
     go build
+
+TODO
+----
+
+- Allow better configurations. For example, there is no way to change themes for reveal/shower ATM.
+- Tests ¯\_(ツ)_/¯
