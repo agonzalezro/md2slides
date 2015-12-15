@@ -50,8 +50,8 @@ func main() {
 		r := mux.NewRouter()
 
 		r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			p.Reload()
 			ifErrFatal(p.Write(w))
+			p.Reload()
 		})
 
 		r.PathPrefix("/").Handler(http.FileServer(http.Dir(".")))

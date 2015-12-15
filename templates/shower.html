@@ -7,9 +7,17 @@
 	<link rel="stylesheet" href="https://agonzalezro.github.io/md2slides/libs/shower/2.0.2/themes/ribbon/styles/screen-16x10.css">
 </head>
 <body class="shower list">
-  {{range .Slides}}
-    <section class="slide">{{.}}</section>
+  {{range $index, $slide := .Slides}}
+  <section class="slide" {{ if eq $index 0 }}id="cover"{{ end }}>{{.}}</section>
   {{end}}
+  <style>
+    #cover h1 {
+      margin:30px 0 0;
+      color: #585A5E;
+      text-align:center;
+      font: 700 70px/1 PT Sans Narrow,sans-serif;
+    }
+  </style>
 	<script src="https://agonzalezro.github.io/md2slides/libs/shower/2.0.2/shower.min.js"></script>
 </body>
 </html>

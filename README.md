@@ -30,6 +30,7 @@ Quick start
 Usage
 -----
 
+    $ md2slides -h
     usage: md2slides [<flags>] <source>
 
     Flags:
@@ -39,7 +40,7 @@ Usage
           --port=8080           port where to run the server.
       -c, --theme-config=THEME-CONFIG
                                 configuration for the theme (JS file)
-          --theme="reveal"      Choose one: [reveal].
+          --theme="reveal"      Choose one: [reveal, shower].
 
     Args:
       <source>  Markdown source file.
