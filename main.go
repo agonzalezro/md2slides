@@ -51,7 +51,9 @@ func main() {
 
 		r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			ifErrFatal(p.Write(w))
-			p.Reload()
+			if err := p.Reload(); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 		})
 
 		r.PathPrefix("/").Handler(http.FileServer(http.Dir(".")))

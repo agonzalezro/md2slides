@@ -54,8 +54,10 @@ func (p *Presentation) Reload() error {
 	if _, err := p.sourceFile.Seek(0, 0); err != nil {
 		return err
 	}
-	if _, err := p.sourceConfig.Seek(0, 0); err != nil {
-		return err
+	if p.sourceConfig != nil {
+		if _, err := p.sourceConfig.Seek(0, 0); err != nil {
+			return err
+		}
 	}
 	return p.Load()
 }
