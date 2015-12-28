@@ -14,6 +14,8 @@ type Presentation struct {
 	Config string
 	Theme  string
 
+	RawContent string
+
 	sourceFile   *os.File
 	sourceConfig *os.File
 }
@@ -31,7 +33,8 @@ func (p *Presentation) Load() error {
 	if err != nil {
 		return err
 	}
-	slides := regexp.MustCompile("\n---\n").Split(string(b), -1)
+	p.RawContent = string(b)
+	slides := regexp.MustCompile("\n---\n").Split(p.RawContent, -1)
 
 	p.Slides = []string{}
 	for _, slide := range slides {
@@ -63,7 +66,7 @@ func (p *Presentation) Reload() error {
 }
 
 func (p Presentation) template() (*template.Template, error) {
-	assetFile := fmt.Sprintf("templates/%s.html", p.Theme)
+	assetFile := fmt.Sprintf("templates/%s.tmpl", p.Theme)
 	tpl, err := Asset(assetFile)
 	if err != nil {
 		return nil, err
