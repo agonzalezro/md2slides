@@ -2,6 +2,8 @@
 
 mkdir -p bin
 
+go generate
+
 TARGETS=(darwin/amd64 linux/amd64)
 
 for target in ${TARGETS[@]}; do
