@@ -1,12 +1,26 @@
 package presentation
 
-import "github.com/russross/blackfriday"
+import (
+	"bytes"
+	"fmt"
+
+	"github.com/russross/blackfriday"
+)
+
+type Renderer struct {
+	blackfriday.Renderer
+}
+
+// Image will use the alt of the image to create the class attribute
+func (r *Renderer) Image(out *bytes.Buffer, link []byte, _ []byte, alt []byte) {
+	out.WriteString(fmt.Sprintf(`<img src="%s" class="%s">`, link, alt))
+}
 
 func markdown(content string) string {
 	// set up the HTML renderer
 	htmlFlags := 0
 	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
-	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
+	renderer := &Renderer{blackfriday.HtmlRenderer(htmlFlags, "", "")}
 
 	// set up the parser
 	extensions := 0
