@@ -18,13 +18,12 @@
   <body>
     <textarea id="source">
 {{/* DO NOT INDENT OR IT WILL FAIL! */}}
-{{.Config}}
 {{.RawContent}}
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
     </script>
     <script>
-var slideshow = remark.create();
+var slideshow = remark.create({{.Config}});
     </script>
   </body>
 </html>

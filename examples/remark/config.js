@@ -1,1 +1,3 @@
-class: center, middle
+{
+  ratio: '16:9'
+}
