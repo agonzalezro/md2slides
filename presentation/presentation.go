@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"os"
 	"regexp"
 	"text/template"
 )
@@ -16,11 +15,11 @@ type Presentation struct {
 
 	RawContent string
 
-	sourceFile   *os.File
-	sourceConfig *os.File
+	sourceFile   string
+	sourceConfig string
 }
 
-func NewFromFileWithConfig(sourceFile *os.File, sourceConfig *os.File) (*Presentation, error) {
+func NewFromFileWithConfig(sourceFile, sourceConfig string) (*Presentation, error) {
 	p := Presentation{sourceFile: sourceFile, sourceConfig: sourceConfig}
 	if err := p.Load(); err != nil {
 		return nil, err
@@ -29,7 +28,7 @@ func NewFromFileWithConfig(sourceFile *os.File, sourceConfig *os.File) (*Present
 }
 
 func (p *Presentation) Load() error {
-	b, err := ioutil.ReadAll(p.sourceFile)
+	b, err := ioutil.ReadFile(p.sourceFile)
 	if err != nil {
 		return err
 	}
@@ -42,8 +41,8 @@ func (p *Presentation) Load() error {
 	}
 
 	// Configuration is optional
-	if p.sourceConfig != nil {
-		b, err := ioutil.ReadAll(p.sourceConfig)
+	if p.sourceConfig != "" {
+		b, err := ioutil.ReadFile(p.sourceConfig)
 		if err != nil {
 			return err
 		}
@@ -51,18 +50,6 @@ func (p *Presentation) Load() error {
 	}
 
 	return nil
-}
-
-func (p *Presentation) Reload() error {
-	if _, err := p.sourceFile.Seek(0, 0); err != nil {
-		return err
-	}
-	if p.sourceConfig != nil {
-		if _, err := p.sourceConfig.Seek(0, 0); err != nil {
-			return err
-		}
-	}
-	return p.Load()
 }
 
 func (p Presentation) template() (*template.Template, error) {

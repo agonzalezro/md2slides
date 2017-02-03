@@ -41,7 +41,11 @@ func main() {
 		kingpin.Fatalf("theme: %s not found", *theme)
 	}
 
-	p, err := presentation.NewFromFileWithConfig(*source, *config)
+	configName := ""
+	if *config != nil {
+		configName = (*config).Name()
+	}
+	p, err := presentation.NewFromFileWithConfig((*source).Name(), configName)
 	ifErrFatal(err)
 
 	p.Theme = *theme
@@ -50,10 +54,10 @@ func main() {
 		r := mux.NewRouter()
 
 		r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			ifErrFatal(p.Write(w))
-			if err := p.Reload(); err != nil {
+			if err := p.Load(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
+			ifErrFatal(p.Write(w))
 		})
 
 		r.PathPrefix("/").Handler(http.FileServer(http.Dir(".")))
