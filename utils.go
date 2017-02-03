@@ -8,7 +8,7 @@ import (
 func ifErrFatal(err error) {
 	if err != nil {
 		fmt.Println("This shouldn't error, please open an issue attaching the following log:")
-		fmt.Println("https://github.com/agonzalezro/md2reveal/issues")
+		fmt.Println("https://github.com/agonzalezro/md2slides/issues")
 		fmt.Println()
 		log.Fatal(err)
 	}
