@@ -2,3 +2,4 @@ md2slides
 vendor
 bin/
 .DS_Store
+*.swp
